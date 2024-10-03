@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
@@ -9,9 +10,11 @@ export default function Home() {
     >
       <div className="absolute inset-0 bg-white bg-opacity-50 flex flex-col items-center justify-center text-black">
         <h2 className="text-3xl md:text-5xl font-bold mb-4">Welcome to Mystery Travel</h2>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-          Get Started
-        </button>
+        <Link to="/getstart">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+            Get Started
+          </button>
+        </Link>
       </div>
     </div>
     </>

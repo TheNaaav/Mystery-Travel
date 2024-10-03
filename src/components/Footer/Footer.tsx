@@ -15,7 +15,7 @@ export default function Footer() {
           {/* Links */}
           <div className="flex space-x-4 items-center">
             <Link to="/about" className="hover:underline">
-              About Me
+              About
             </Link>
             <Link to="/contact" className="hover:underline">
               Contact
