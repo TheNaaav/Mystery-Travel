@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 
 export default function GetStart() {
   const [formData, setFormData] = useState({
     destination: '',
-    budget: '',
     tripLength: '',
     season: '',
   });
@@ -17,70 +18,32 @@ export default function GetStart() {
     });
   };
 
-  // Simulate a search function based on user preferences
-  const searchDestinations = async (preferences: { destination: any; budget: any; tripLength: any; season: any; }) => {
-    const { destination, budget, tripLength, season } = preferences;
+  const searchDestinations = async () => {
+    const { destination, tripLength, season } = formData;
+  
+    const apiKey = "AIzaSyDilgL_MyEDcxAdbmBN5i4wZwGMpgsr6YE"
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
     setPending(true);
-  
-    const query = `top destinations in ${destination} for ${season} travel with a budget of ${budget} for ${tripLength}`;
-  
-    const apiKey = "AIzaSyAist2OTD9rFblzf60v5eQ4togCfVrDN1Y";
-    const searchEngineId = "e0c4990213598493f";
-  
-    try {
-      // Call the Google Custom Search API
-      const response = await fetch(`https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${apiKey}&cx=${searchEngineId}`);
-  
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-  
-      const data = await response.json(); // Parse the JSON response
-  
-      // Check if there are results
-      if (!data.items || data.items.length === 0) {
-        return ["No results found. Please try different preferences."];
-      }
-  
-      // Filter results to ensure they are relevant to the selected destination
-      const results = data.items
-        .filter((item: { title: string; }) => item.title.toLowerCase().includes(destination.toLowerCase())) // Ensure the title includes the selected destination
-        .map((item: { title: string; snippet: string; link: any; }) => {
-          const country = item.title || "Unknown Destination"; // Using title to guess the country
-          const budgetInfo = `Budget: ${budget}`; // Budget info
-          const description = item.snippet || "No description available."; // Description from snippet
-          const link = item.link; // Link to the full article
-          return `${country} - ${budgetInfo} - ${description} - Read more: ${link}`;
-        });
-  
-      return results;
+    const query = `top destinations in ${destination} for ${season} for ${tripLength} days`;
+
+    try{
+      const result = await model.generateContent(query);
+      const textResponse = result.response.text();
+      const suggestions = textResponse.split('\n').map((suggestion) => suggestion.trim()); 
+      setResults(suggestions);
     } catch (error) {
-      console.error("Error fetching data from Google:", error);
-      return ["Error fetching destination suggestions. Please try again."];
+      console.error("Error fetching data from API:", error);
+      setResults(["Error fetching destination suggestions. Please try again."]);
     } finally {
       setPending(false);
     }
+    
   };
-  
-  
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPending(true);
-
-    // Gather user preferences from form state
-    const preferences = {
-      destination: formData.destination,
-      budget: formData.budget,
-      tripLength: formData.tripLength,
-      season: formData.season,
-    };
-
-    // Call the search function with the preferences
-    const searchResults = await searchDestinations(preferences); 
-    setResults(searchResults); 
-
-    setPending(false); 
+    await searchDestinations();
   };
 
   return (
@@ -105,20 +68,6 @@ export default function GetStart() {
             <option value="africa">Africa</option>
             <option value="australia">Australia</option>
           </select>
-        </div>
-
-        {/* Budget Input */}
-        <div>
-          <label htmlFor="budget" className="block font-semibold">Budget</label>
-          <input
-            type="number"
-            name="budget"
-            id="budget"
-            placeholder="What's your budget?"
-            value={formData.budget}
-            onChange={handleChange}
-            className="w-full p-2 border rounded text-black"
-          />
         </div>
 
         {/* Trip Length Input */}
@@ -166,13 +115,22 @@ export default function GetStart() {
 
       {/* Display Search Results */}
       {results.length > 0 && (
-        <div className="mt-8 ">
+        <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Search Results</h2>
-          <ul className="space-y-2 text-lg text-black">
-            {results.map((result, index) => (
-              <li key={index} className="p-2 border rounded bg-gray-100">{result}</li>
-            ))}
-          </ul>
+          <table className="min-w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2 text-left">Suggestion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {results.map((result, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-300 p-2">{result}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
