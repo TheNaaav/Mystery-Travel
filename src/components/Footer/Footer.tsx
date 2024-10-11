@@ -1,16 +1,20 @@
-import { Footer as FlowbiteFooter } from "flowbite-react";
-import { FaInstagram, FaFacebookF, FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { FaInstagram, FaFacebookF, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <FlowbiteFooter container className="bg-gray-800 p-4 text-white">
+    <footer className="bg-gray-800 p-6 text-white">
       {/* Wrapper div to align all content in one row */}
       <div className="flex flex-col md:flex-row justify-between items-center w-full">
         {/* Left section - Copyright and Links */}
         <div className="flex flex-col md:flex-row items-center md:space-x-6 w-full md:w-auto justify-between">
           {/* Copyright */}
-          <FlowbiteFooter.Copyright href="/" by="Navi™" year={2024} className="mb-2 md:mb-0" />
+          <p className="mb-2 md:mb-0">
+            © 2024{' '}
+            <a href="/" className="hover:underline">
+              Navi™
+            </a>
+          </p>
 
           {/* Links */}
           <div className="flex space-x-4 items-center">
@@ -39,6 +43,6 @@ export default function Footer() {
           </a>
         </div>
       </div>
-    </FlowbiteFooter>
+    </footer>
   );
 }
