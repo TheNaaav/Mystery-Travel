@@ -30,6 +30,9 @@ export default function Home() {
             repeat={Infinity} 
           />
         </h2>
+        <p className="text-lg md:text-xl text-black font-semibold mb-4">
+          This site is currently under development. Stay tuned for updates!
+        </p>
         <Link to="/getstart">
           <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl hover:translate-y-1 active:scale-95 active:translate-y-0.5">
             Get Started
